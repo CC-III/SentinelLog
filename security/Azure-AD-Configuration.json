@@ -1,0 +1,319 @@
+{
+  "azureADConfiguration": {
+    "tenantId": "your-tenant-id",
+    "clientId": "your-client-id",
+    "clientSecret": "your-client-secret",
+    "authority": "https://login.microsoftonline.com/your-tenant-id",
+    "redirectUri": "https://yourorganization.sharepoint.com/sites/SentinelLog",
+    "scopes": [
+      "https://graph.microsoft.com/.default",
+      "https://yourorganization.sharepoint.com/AllSites.Read",
+      "https://yourorganization.sharepoint.com/AllSites.Write"
+    ]
+  },
+  "applicationRegistration": {
+    "displayName": "SentinelLog",
+    "description": "Compliant ChatGPT conversation logging system",
+    "signInAudience": "AzureADMyOrg",
+    "supportedAccountTypes": "Single tenant",
+    "requiredResourceAccess": [
+      {
+        "resourceAppId": "00000003-0000-0000-c000-000000000000",
+        "resourceAccess": [
+          {
+            "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+            "type": "Scope"
+          },
+          {
+            "id": "df021288-bdef-4463-88db-98f22de89214",
+            "type": "Role"
+          }
+        ]
+      },
+      {
+        "resourceAppId": "00000003-0000-0ff1-ce00-000000000000",
+        "resourceAccess": [
+          {
+            "id": "2cfdc887-d7b4-4798-9b33-3d98d6b95dd2",
+            "type": "Scope"
+          },
+          {
+            "id": "640ddd16-e5b7-4d71-9690-3f4022699ee7",
+            "type": "Role"
+          }
+        ]
+      }
+    ],
+    "web": {
+      "redirectUris": [
+        "https://yourorganization.sharepoint.com/sites/SentinelLog",
+        "https://make.powerapps.com/",
+        "https://make.powerautomate.com/"
+      ],
+      "implicitGrantSettings": {
+        "enableIdTokenIssuance": true,
+        "enableAccessTokenIssuance": true
+      }
+    },
+    "api": {
+      "requestedAccessTokenVersion": 2,
+      "oauth2PermissionScopes": [
+        {
+          "id": "unique-scope-id-1",
+          "adminConsentDescription": "Allow the application to access SentinelLog on behalf of the signed-in user",
+          "adminConsentDisplayName": "Access SentinelLog",
+          "isEnabled": true,
+          "type": "User",
+          "userConsentDescription": "Allow the application to access SentinelLog on your behalf",
+          "userConsentDisplayName": "Access SentinelLog",
+          "value": "access_as_user"
+        }
+      ]
+    }
+  },
+  "securityGroups": [
+    {
+      "name": "SentinelLog-Administrators",
+      "description": "Full administrative access to SentinelLog system",
+      "members": [
+        "admin@yourorganization.com"
+      ],
+      "permissions": [
+        "Read",
+        "Write",
+        "Delete",
+        "Manage",
+        "FullControl"
+      ]
+    },
+    {
+      "name": "SentinelLog-Users",
+      "description": "Standard users who can submit and view their own chat logs",
+      "members": [
+        "user1@yourorganization.com",
+        "user2@yourorganization.com"
+      ],
+      "permissions": [
+        "Read",
+        "Write",
+        "Submit"
+      ]
+    },
+    {
+      "name": "SentinelLog-ReadOnly",
+      "description": "Read-only access for auditors and compliance officers",
+      "members": [
+        "auditor@yourorganization.com",
+        "compliance@yourorganization.com"
+      ],
+      "permissions": [
+        "Read",
+        "Audit"
+      ]
+    }
+  ],
+  "conditionalAccessPolicies": [
+    {
+      "name": "SentinelLog-MFA-Required",
+      "description": "Require MFA for all SentinelLog access",
+      "state": "enabled",
+      "conditions": {
+        "applications": {
+          "includeApplications": ["SentinelLog-App-ID"]
+        },
+        "users": {
+          "includeUsers": ["All"]
+        },
+        "locations": {
+          "includeLocations": ["All"]
+        }
+      },
+      "grantControls": {
+        "operator": "OR",
+        "builtInControls": [
+          "mfa",
+          "compliantDevice"
+        ]
+      }
+    },
+    {
+      "name": "SentinelLog-Device-Compliance",
+      "description": "Require compliant devices for access",
+      "state": "enabled",
+      "conditions": {
+        "applications": {
+          "includeApplications": ["SentinelLog-App-ID"]
+        },
+        "users": {
+          "includeUsers": ["All"]
+        }
+      },
+      "grantControls": {
+        "operator": "AND",
+        "builtInControls": [
+          "compliantDevice",
+          "domainJoinedDevice"
+        ]
+      }
+    }
+  ],
+  "roleAssignments": [
+    {
+      "principalId": "SentinelLog-Administrators",
+      "roleDefinitionId": "62e90394-69f5-4237-9190-012177145e10",
+      "scope": "/subscriptions/your-subscription-id/resourceGroups/your-resource-group"
+    },
+    {
+      "principalId": "SentinelLog-Users",
+      "roleDefinitionId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "/subscriptions/your-subscription-id/resourceGroups/your-resource-group"
+    }
+  ],
+  "auditingConfiguration": {
+    "enableAuditLogs": true,
+    "auditLogRetentionDays": 365,
+    "auditEvents": [
+      "SignInLogs",
+      "AuditLogs",
+      "DirectoryAuditLogs",
+      "ApplicationAuditLogs"
+    ],
+    "logAnalyticsWorkspaceId": "your-workspace-id",
+    "enableRealTimeMonitoring": true
+  },
+  "dataLossPreventionPolicies": [
+    {
+      "name": "SentinelLog-DLP-Policy",
+      "description": "Prevent unauthorized sharing of ChatGPT conversation logs",
+      "state": "enabled",
+      "conditions": [
+        {
+          "contentContains": "SENTINELLOG CHAT TRANSCRIPT",
+          "action": "block"
+        },
+        {
+          "fileExtension": [".txt", ".md", ".log"],
+          "containsMetadata": "SentinelLog",
+          "action": "audit"
+        }
+      ],
+      "actions": [
+        {
+          "type": "blockAccess",
+          "settings": {
+            "blockOverride": false,
+            "notifyUser": true
+          }
+        },
+        {
+          "type": "auditOnly",
+          "settings": {
+            "generateAlert": true,
+            "notifyAdmin": true
+          }
+        }
+      ]
+    }
+  ],
+  "complianceConfiguration": {
+    "enableRetentionPolicy": true,
+    "retentionPeriodDays": 2555,
+    "dispositionMethod": "permanentDelete",
+    "enableLegalHold": false,
+    "complianceOfficer": "compliance@yourorganization.com",
+    "sensitivityLabels": [
+      {
+        "name": "SentinelLog-Internal",
+        "description": "Internal ChatGPT conversation logs",
+        "priority": 1,
+        "settings": {
+          "contentMarking": true,
+          "encryption": false,
+          "watermarking": true
+        }
+      },
+      {
+        "name": "SentinelLog-Confidential",
+        "description": "Confidential ChatGPT conversation logs",
+        "priority": 2,
+        "settings": {
+          "contentMarking": true,
+          "encryption": true,
+          "watermarking": true,
+          "restrictedAccess": true
+        }
+      }
+    ]
+  },
+  "powerPlatformGovernance": {
+    "tenantSettings": {
+      "powerAppsGoverned": true,
+      "powerAutomateGoverned": true,
+      "dataConnectorRestrictions": [
+        {
+          "connector": "sharepointonline",
+          "classification": "Business",
+          "allowedInEnvironment": "Production"
+        },
+        {
+          "connector": "excelonline",
+          "classification": "Business",
+          "allowedInEnvironment": "Production"
+        }
+      ]
+    },
+    "environmentPolicies": [
+      {
+        "name": "SentinelLog-Production-Policy",
+        "description": "Governance policy for SentinelLog production environment",
+        "environment": "Production",
+        "restrictions": {
+          "preventDataExport": true,
+          "requireApprovalForNewApps": true,
+          "restrictPremiumConnectors": true
+        }
+      }
+    ]
+  },
+  "monitoringAndAlerting": {
+    "enableSecurityMonitoring": true,
+    "alertingRules": [
+      {
+        "name": "Suspicious-Login-Activity",
+        "description": "Alert on suspicious login patterns",
+        "conditions": [
+          "multipleFailedAttempts",
+          "unusualLocation",
+          "newDevice"
+        ],
+        "severity": "High",
+        "notificationChannels": [
+          "email:security@yourorganization.com",
+          "teams:security-alerts-channel"
+        ]
+      },
+      {
+        "name": "Bulk-Data-Access",
+        "description": "Alert on bulk data access patterns",
+        "conditions": [
+          "highVolumeFileAccess",
+          "rapidSuccessiveDownloads"
+        ],
+        "severity": "Medium",
+        "notificationChannels": [
+          "email:admin@yourorganization.com"
+        ]
+      }
+    ],
+    "dashboardConfiguration": {
+      "enableRealTimeDashboard": true,
+      "keyMetrics": [
+        "activeUsers",
+        "loginSuccess",
+        "dataAccessEvents",
+        "complianceViolations"
+      ],
+      "refreshInterval": "5 minutes"
+    }
+  }
+}

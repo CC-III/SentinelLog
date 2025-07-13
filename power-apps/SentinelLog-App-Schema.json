@@ -1,0 +1,202 @@
+{
+  "FormatVersion": "3.0",
+  "AppName": "SentinelLog",
+  "Description": "Compliant ChatGPT conversation logging system",
+  "Author": "Cursor AI",
+  "Version": "1.0.0",
+  "Screens": {
+    "MainScreen": {
+      "DisplayName": "ChatGPT Log Submission",
+      "Controls": [
+        {
+          "Name": "TitleLabel",
+          "Type": "Label",
+          "Properties": {
+            "Text": "\"SentinelLog - ChatGPT Conversation Logger\"",
+            "FontSize": "24",
+            "Color": "RGBA(0, 120, 212, 1)",
+            "FontWeight": "Bold"
+          }
+        },
+        {
+          "Name": "ChatTranscriptInput",
+          "Type": "TextInput",
+          "Properties": {
+            "HintText": "\"Paste your ChatGPT conversation here...\"",
+            "Mode": "TextInputMode.MultiLine",
+            "Height": "300",
+            "Required": "true"
+          }
+        },
+        {
+          "Name": "ContextCodeDropdown",
+          "Type": "Dropdown",
+          "Properties": {
+            "HintText": "\"Select Context Code\"",
+            "Items": "[{ID: \"100\", Value: \"Development\"}, {ID: \"200\", Value: \"Testing\"}, {ID: \"300\", Value: \"Production\"}, {ID: \"400\", Value: \"Documentation\"}]",
+            "Required": "true"
+          }
+        },
+        {
+          "Name": "FunctionCodeDropdown",
+          "Type": "Dropdown",
+          "Properties": {
+            "HintText": "\"Select Function Code\"",
+            "Items": "[{ID: \"001\", Value: \"Analysis\"}, {ID: \"002\", Value: \"Design\"}, {ID: \"003\", Value: \"Implementation\"}, {ID: \"004\", Value: \"Testing\"}, {ID: \"005\", Value: \"Review\"}, {ID: \"006\", Value: \"Debugging\"}, {ID: \"007\", Value: \"Documentation\"}]",
+            "Required": "true"
+          }
+        },
+        {
+          "Name": "DependencyCodeDropdown",
+          "Type": "Dropdown",
+          "Properties": {
+            "HintText": "\"Select Dependency Code\"",
+            "Items": "[{ID: \"001\", Value: \"Frontend\"}, {ID: \"002\", Value: \"Backend\"}, {ID: \"003\", Value: \"Database\"}, {ID: \"004\", Value: \"API\"}, {ID: \"005\", Value: \"UI/UX\"}, {ID: \"006\", Value: \"Security\"}, {ID: \"007\", Value: \"DevOps\"}]",
+            "Required": "true"
+          }
+        },
+        {
+          "Name": "IterationCodeDropdown",
+          "Type": "Dropdown",
+          "Properties": {
+            "HintText": "\"Select Iteration\"",
+            "Items": "[{ID: \"001\", Value: \"Initial\"}, {ID: \"002\", Value: \"Revision 1\"}, {ID: \"003\", Value: \"Revision 2\"}, {ID: \"004\", Value: \"Revision 3\"}, {ID: \"005\", Value: \"Final\"}]",
+            "Default": "001"
+          }
+        },
+        {
+          "Name": "FlagCodeDropdown",
+          "Type": "Dropdown",
+          "Properties": {
+            "HintText": "\"Select Flag (Optional)\"",
+            "Items": "[{ID: \"P\", Value: \"Priority\"}, {ID: \"U\", Value: \"Urgent\"}, {ID: \"R\", Value: \"Review\"}, {ID: \"D\", Value: \"Draft\"}, {ID: \"F\", Value: \"Final\"}]",
+            "Required": "false"
+          }
+        },
+        {
+          "Name": "FileExtensionDropdown",
+          "Type": "Dropdown",
+          "Properties": {
+            "HintText": "\"File Extension\"",
+            "Items": "[{ID: \"txt\", Value: \"Text (.txt)\"}, {ID: \"md\", Value: \"Markdown (.md)\"}, {ID: \"log\", Value: \"Log (.log)\"}]",
+            "Default": "txt"
+          }
+        },
+        {
+          "Name": "DescriptionInput",
+          "Type": "TextInput",
+          "Properties": {
+            "HintText": "\"Enter description or tags...\"",
+            "Mode": "TextInputMode.SingleLine",
+            "Required": "false"
+          }
+        },
+        {
+          "Name": "SubmitButton",
+          "Type": "Button",
+          "Properties": {
+            "Text": "\"Submit Chat Log\"",
+            "OnSelect": "SubmitChatLog()",
+            "Color": "White",
+            "Fill": "RGBA(0, 120, 212, 1)"
+          }
+        },
+        {
+          "Name": "RecentUploadsGallery",
+          "Type": "Gallery",
+          "Properties": {
+            "Items": "RecentUploads",
+            "TemplateSize": "60",
+            "ShowNavigation": "false"
+          },
+          "Template": {
+            "Controls": [
+              {
+                "Name": "FileNameLabel",
+                "Type": "Label",
+                "Properties": {
+                  "Text": "ThisItem.FileName",
+                  "FontWeight": "Bold"
+                }
+              },
+              {
+                "Name": "TimestampLabel",
+                "Type": "Label",
+                "Properties": {
+                  "Text": "ThisItem.Timestamp",
+                  "FontSize": "12"
+                }
+              },
+              {
+                "Name": "FileLink",
+                "Type": "Button",
+                "Properties": {
+                  "Text": "\"Open\"",
+                  "OnSelect": "Launch(ThisItem.FileURL)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "SuccessScreen": {
+      "DisplayName": "Upload Success",
+      "Controls": [
+        {
+          "Name": "SuccessMessage",
+          "Type": "Label",
+          "Properties": {
+            "Text": "\"Chat log successfully submitted!\"",
+            "FontSize": "20",
+            "Color": "Green"
+          }
+        },
+        {
+          "Name": "FileInfoLabel",
+          "Type": "Label",
+          "Properties": {
+            "Text": "\"File: \" & GeneratedFileName",
+            "FontWeight": "Bold"
+          }
+        },
+        {
+          "Name": "SharePointLink",
+          "Type": "Button",
+          "Properties": {
+            "Text": "\"View in SharePoint\"",
+            "OnSelect": "Launch(SharePointFileURL)"
+          }
+        },
+        {
+          "Name": "BackButton",
+          "Type": "Button",
+          "Properties": {
+            "Text": "\"Submit Another\"",
+            "OnSelect": "Navigate(MainScreen)"
+          }
+        }
+      ]
+    }
+  },
+  "Variables": {
+    "GeneratedFileName": "Text",
+    "SharePointFileURL": "Text",
+    "RecentUploads": "Table",
+    "CurrentUser": "Record"
+  },
+  "Connections": [
+    {
+      "Name": "PowerAutomate",
+      "Type": "PowerAppsConnector"
+    },
+    {
+      "Name": "SharePointConnection",
+      "Type": "SharePoint"
+    },
+    {
+      "Name": "ExcelConnection",
+      "Type": "ExcelOnline"
+    }
+  ]
+}

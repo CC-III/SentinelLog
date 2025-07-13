@@ -1,0 +1,461 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "PowerApps": {
+        "inputs": {
+          "schema": {
+            "properties": {
+              "chatTranscript": {
+                "description": "Formatted chat transcript with metadata",
+                "title": "Chat Transcript",
+                "type": "string"
+              },
+              "fileName": {
+                "description": "Generated filename",
+                "title": "File Name",
+                "type": "string"
+              },
+              "sharePointPath": {
+                "description": "Dynamic SharePoint folder path",
+                "title": "SharePoint Path",
+                "type": "string"
+              },
+              "contextCode": {
+                "description": "Context code",
+                "title": "Context Code",
+                "type": "string"
+              },
+              "functionCode": {
+                "description": "Function code",
+                "title": "Function Code",
+                "type": "string"
+              },
+              "dependencyCode": {
+                "description": "Dependency code",
+                "title": "Dependency Code",
+                "type": "string"
+              },
+              "iterationCode": {
+                "description": "Iteration code",
+                "title": "Iteration Code",
+                "type": "string"
+              },
+              "flagCode": {
+                "description": "Flag code (optional)",
+                "title": "Flag Code",
+                "type": "string"
+              },
+              "fileExtension": {
+                "description": "File extension",
+                "title": "File Extension",
+                "type": "string"
+              },
+              "description": {
+                "description": "User description",
+                "title": "Description",
+                "type": "string"
+              },
+              "userEmail": {
+                "description": "User email",
+                "title": "User Email",
+                "type": "string"
+              },
+              "userFullName": {
+                "description": "User full name",
+                "title": "User Full Name",
+                "type": "string"
+              },
+              "timestamp": {
+                "description": "Submission timestamp",
+                "title": "Timestamp",
+                "type": "string"
+              },
+              "contextName": {
+                "description": "Context name",
+                "title": "Context Name",
+                "type": "string"
+              },
+              "functionName": {
+                "description": "Function name",
+                "title": "Function Name",
+                "type": "string"
+              },
+              "dependencyName": {
+                "description": "Dependency name",
+                "title": "Dependency Name",
+                "type": "string"
+              },
+              "iterationName": {
+                "description": "Iteration name",
+                "title": "Iteration Name",
+                "type": "string"
+              },
+              "flagName": {
+                "description": "Flag name",
+                "title": "Flag Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "chatTranscript",
+              "fileName",
+              "sharePointPath",
+              "contextCode",
+              "functionCode",
+              "dependencyCode",
+              "iterationCode",
+              "fileExtension",
+              "userEmail",
+              "userFullName",
+              "timestamp",
+              "contextName",
+              "functionName",
+              "dependencyName",
+              "iterationName"
+            ],
+            "type": "object"
+          }
+        },
+        "kind": "PowerApp",
+        "type": "Request"
+      }
+    },
+    "actions": {
+      "Initialize_Variables": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "SharePointSiteUrl",
+              "type": "string",
+              "value": "https://yourorganization.sharepoint.com/sites/SentinelLog"
+            },
+            {
+              "name": "DocumentLibraryName",
+              "type": "string",
+              "value": "ChatGPT-Logs"
+            },
+            {
+              "name": "ExcelWorkbookPath",
+              "type": "string",
+              "value": "/Shared Documents/SentinelLog-Metadata.xlsx"
+            },
+            {
+              "name": "ProcessingStatus",
+              "type": "string",
+              "value": "Starting"
+            }
+          ]
+        },
+        "runAfter": {}
+      },
+      "Check_SharePoint_Folder_Structure": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "sharepointonline",
+            "operationId": "GetFolderByPath",
+            "apiId": "/providers/Microsoft.PowerApps/apis/sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@variables('SharePointSiteUrl')",
+            "path": "@triggerBody()['sharePointPath']"
+          }
+        },
+        "runAfter": {
+          "Initialize_Variables": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Create_Folder_Structure": {
+        "type": "Scope",
+        "actions": {
+          "Create_Context_Folder": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "sharepointonline",
+                "operationId": "CreateFolder",
+                "apiId": "/providers/Microsoft.PowerApps/apis/sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@variables('SharePointSiteUrl')",
+                "table": "@variables('DocumentLibraryName')",
+                "path": "@concat('/ChatGPT-Logs/', triggerBody()['contextName'])"
+              }
+            },
+            "runAfter": {}
+          },
+          "Create_Function_Folder": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "sharepointonline",
+                "operationId": "CreateFolder",
+                "apiId": "/providers/Microsoft.PowerApps/apis/sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@variables('SharePointSiteUrl')",
+                "table": "@variables('DocumentLibraryName')",
+                "path": "@concat('/ChatGPT-Logs/', triggerBody()['contextName'], '/', triggerBody()['functionName'])"
+              }
+            },
+            "runAfter": {
+              "Create_Context_Folder": [
+                "Succeeded",
+                "Failed"
+              ]
+            }
+          },
+          "Create_Dependency_Folder": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "sharepointonline",
+                "operationId": "CreateFolder",
+                "apiId": "/providers/Microsoft.PowerApps/apis/sharepointonline"
+              },
+              "parameters": {
+                "dataset": "@variables('SharePointSiteUrl')",
+                "table": "@variables('DocumentLibraryName')",
+                "path": "@concat('/ChatGPT-Logs/', triggerBody()['contextName'], '/', triggerBody()['functionName'], '/', triggerBody()['dependencyName'])"
+              }
+            },
+            "runAfter": {
+              "Create_Function_Folder": [
+                "Succeeded",
+                "Failed"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Check_SharePoint_Folder_Structure": [
+            "Failed"
+          ]
+        }
+      },
+      "Create_File_in_SharePoint": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "sharepointonline",
+            "operationId": "CreateFile",
+            "apiId": "/providers/Microsoft.PowerApps/apis/sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@variables('SharePointSiteUrl')",
+            "folderPath": "@concat('/ChatGPT-Logs/', triggerBody()['contextName'], '/', triggerBody()['functionName'], '/', triggerBody()['dependencyName'])",
+            "name": "@triggerBody()['fileName']",
+            "body": "@triggerBody()['chatTranscript']"
+          }
+        },
+        "runAfter": {
+          "Check_SharePoint_Folder_Structure": [
+            "Succeeded"
+          ],
+          "Create_Folder_Structure": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Update_File_Properties": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "sharepointonline",
+            "operationId": "UpdateFileProperties",
+            "apiId": "/providers/Microsoft.PowerApps/apis/sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@variables('SharePointSiteUrl')",
+            "table": "@variables('DocumentLibraryName')",
+            "id": "@body('Create_File_in_SharePoint')?['Id']",
+            "item": {
+              "Title": "@triggerBody()['fileName']",
+              "SentinelLog_ContextCode": "@triggerBody()['contextCode']",
+              "SentinelLog_FunctionCode": "@triggerBody()['functionCode']",
+              "SentinelLog_DependencyCode": "@triggerBody()['dependencyCode']",
+              "SentinelLog_IterationCode": "@triggerBody()['iterationCode']",
+              "SentinelLog_FlagCode": "@triggerBody()['flagCode']",
+              "SentinelLog_UserEmail": "@triggerBody()['userEmail']",
+              "SentinelLog_UserFullName": "@triggerBody()['userFullName']",
+              "SentinelLog_Description": "@triggerBody()['description']",
+              "SentinelLog_ProcessedDate": "@utcNow()"
+            }
+          }
+        },
+        "runAfter": {
+          "Create_File_in_SharePoint": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Log_to_Excel_Metadata": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "excelonline",
+            "operationId": "AddRowToTable",
+            "apiId": "/providers/Microsoft.PowerApps/apis/excelonline"
+          },
+          "parameters": {
+            "source": "sites/SentinelLog",
+            "drive": "b!sharepoint-drive-id",
+            "file": "@variables('ExcelWorkbookPath')",
+            "table": "MetadataLog",
+            "item": {
+              "FileName": "@triggerBody()['fileName']",
+              "ContextCode": "@triggerBody()['contextCode']",
+              "ContextName": "@triggerBody()['contextName']",
+              "FunctionCode": "@triggerBody()['functionCode']",
+              "FunctionName": "@triggerBody()['functionName']",
+              "DependencyCode": "@triggerBody()['dependencyCode']",
+              "DependencyName": "@triggerBody()['dependencyName']",
+              "IterationCode": "@triggerBody()['iterationCode']",
+              "IterationName": "@triggerBody()['iterationName']",
+              "FlagCode": "@triggerBody()['flagCode']",
+              "FlagName": "@triggerBody()['flagName']",
+              "UserEmail": "@triggerBody()['userEmail']",
+              "UserFullName": "@triggerBody()['userFullName']",
+              "Description": "@triggerBody()['description']",
+              "FileExtension": "@triggerBody()['fileExtension']",
+              "SharePointPath": "@triggerBody()['sharePointPath']",
+              "FileURL": "@body('Create_File_in_SharePoint')?['Path']",
+              "ProcessedDate": "@utcNow()",
+              "ProcessedBy": "SentinelLog-System",
+              "Status": "Processed",
+              "Version": "1.0"
+            }
+          }
+        },
+        "runAfter": {
+          "Update_File_Properties": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Send_Success_Response": {
+        "type": "Response",
+        "inputs": {
+          "statusCode": 200,
+          "body": {
+            "success": true,
+            "message": "Chat log successfully processed and stored",
+            "fileName": "@triggerBody()['fileName']",
+            "fileUrl": "@body('Create_File_in_SharePoint')?['Path']",
+            "sharePointId": "@body('Create_File_in_SharePoint')?['Id']",
+            "processedDate": "@utcNow()",
+            "metadataLogged": true
+          }
+        },
+        "runAfter": {
+          "Log_to_Excel_Metadata": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Handle_Errors": {
+        "type": "Scope",
+        "actions": {
+          "Log_Error_to_Excel": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "excelonline",
+                "operationId": "AddRowToTable",
+                "apiId": "/providers/Microsoft.PowerApps/apis/excelonline"
+              },
+              "parameters": {
+                "source": "sites/SentinelLog",
+                "drive": "b!sharepoint-drive-id",
+                "file": "@variables('ExcelWorkbookPath')",
+                "table": "ErrorLog",
+                "item": {
+                  "FileName": "@triggerBody()['fileName']",
+                  "UserEmail": "@triggerBody()['userEmail']",
+                  "ErrorMessage": "@string(actions('Create_File_in_SharePoint')?['error'])",
+                  "ErrorDate": "@utcNow()",
+                  "ProcessedBy": "SentinelLog-System",
+                  "Status": "Error"
+                }
+              }
+            },
+            "runAfter": {}
+          },
+          "Send_Error_Response": {
+            "type": "Response",
+            "inputs": {
+              "statusCode": 400,
+              "body": {
+                "success": false,
+                "error": "Failed to process chat log submission",
+                "details": "@string(actions('Create_File_in_SharePoint')?['error'])",
+                "fileName": "@triggerBody()['fileName']",
+                "processedDate": "@utcNow()",
+                "metadataLogged": false
+              }
+            },
+            "runAfter": {
+              "Log_Error_to_Excel": [
+                "Succeeded",
+                "Failed"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Log_to_Excel_Metadata": [
+            "Failed"
+          ],
+          "Update_File_Properties": [
+            "Failed"
+          ],
+          "Create_File_in_SharePoint": [
+            "Failed"
+          ]
+        }
+      }
+    }
+  },
+  "connectionReferences": {
+    "sharepointonline": {
+      "connectionName": "sharepointonline",
+      "source": "Embedded",
+      "id": "/providers/Microsoft.PowerApps/apis/sharepointonline"
+    },
+    "excelonline": {
+      "connectionName": "excelonline",
+      "source": "Embedded",
+      "id": "/providers/Microsoft.PowerApps/apis/excelonline"
+    }
+  },
+  "flowMetadata": {
+    "schemaVersion": "1.0.0.0",
+    "importMethod": "MSAPP",
+    "flowName": "ProcessChatLogSubmission",
+    "displayName": "SentinelLog - Process Chat Log Submission",
+    "description": "Backend flow to process ChatGPT conversation logs from Power Apps, store in SharePoint, and log metadata in Excel.",
+    "author": "Cursor AI",
+    "version": "1.0.0",
+    "created": "2024-01-01T00:00:00Z",
+    "modified": "2024-01-01T00:00:00Z",
+    "triggers": 1,
+    "actions": 8,
+    "connectors": [
+      "SharePoint",
+      "Excel Online"
+    ],
+    "complexity": "Medium",
+    "estimatedRunTime": "10-30 seconds"
+  }
+}

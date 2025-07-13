@@ -1,0 +1,517 @@
+{
+  "workbookInfo": {
+    "name": "SentinelLog-Metadata.xlsx",
+    "description": "Metadata logging workbook for ChatGPT conversation transcripts",
+    "version": "1.0.0",
+    "author": "Cursor AI",
+    "location": "/Shared Documents/SentinelLog-Metadata.xlsx",
+    "sharePointSite": "https://yourorganization.sharepoint.com/sites/SentinelLog"
+  },
+  "worksheets": [
+    {
+      "name": "MetadataLog",
+      "description": "Primary metadata log for all processed chat transcripts",
+      "tables": [
+        {
+          "name": "MetadataLog",
+          "displayName": "ChatGPT Metadata Log",
+          "columns": [
+            {
+              "name": "FileName",
+              "type": "Text",
+              "required": true,
+              "description": "Generated filename (e.g., 300007001002P01.txt)"
+            },
+            {
+              "name": "ContextCode",
+              "type": "Text",
+              "required": true,
+              "description": "Context classification code (100-400)"
+            },
+            {
+              "name": "ContextName",
+              "type": "Text",
+              "required": true,
+              "description": "Context classification name"
+            },
+            {
+              "name": "FunctionCode",
+              "type": "Text",
+              "required": true,
+              "description": "Function classification code (001-007)"
+            },
+            {
+              "name": "FunctionName",
+              "type": "Text",
+              "required": true,
+              "description": "Function classification name"
+            },
+            {
+              "name": "DependencyCode",
+              "type": "Text",
+              "required": true,
+              "description": "Dependency classification code (001-007)"
+            },
+            {
+              "name": "DependencyName",
+              "type": "Text",
+              "required": true,
+              "description": "Dependency classification name"
+            },
+            {
+              "name": "IterationCode",
+              "type": "Text",
+              "required": true,
+              "description": "Iteration number code (001-999)"
+            },
+            {
+              "name": "IterationName",
+              "type": "Text",
+              "required": true,
+              "description": "Iteration name"
+            },
+            {
+              "name": "FlagCode",
+              "type": "Text",
+              "required": false,
+              "description": "Optional flag code (P, U, R, D, F)"
+            },
+            {
+              "name": "FlagName",
+              "type": "Text",
+              "required": false,
+              "description": "Optional flag name"
+            },
+            {
+              "name": "UserEmail",
+              "type": "Text",
+              "required": true,
+              "description": "Email address of submitting user"
+            },
+            {
+              "name": "UserFullName",
+              "type": "Text",
+              "required": true,
+              "description": "Full name of submitting user"
+            },
+            {
+              "name": "Description",
+              "type": "Text",
+              "required": false,
+              "description": "User-provided description or tags"
+            },
+            {
+              "name": "FileExtension",
+              "type": "Text",
+              "required": true,
+              "description": "File extension (txt, md, log)"
+            },
+            {
+              "name": "SharePointPath",
+              "type": "Text",
+              "required": true,
+              "description": "Dynamic SharePoint folder path"
+            },
+            {
+              "name": "FileURL",
+              "type": "Text",
+              "required": true,
+              "description": "Full URL to the stored file in SharePoint"
+            },
+            {
+              "name": "ProcessedDate",
+              "type": "DateTime",
+              "required": true,
+              "description": "Date and time when the log was processed"
+            },
+            {
+              "name": "ProcessedBy",
+              "type": "Text",
+              "required": true,
+              "description": "System or user that processed the log"
+            },
+            {
+              "name": "Status",
+              "type": "Text",
+              "required": true,
+              "description": "Processing status (Processed, Error, Pending)"
+            },
+            {
+              "name": "Version",
+              "type": "Text",
+              "required": true,
+              "description": "SentinelLog system version"
+            },
+            {
+              "name": "FileSize",
+              "type": "Number",
+              "required": false,
+              "description": "File size in bytes"
+            },
+            {
+              "name": "ConversationLength",
+              "type": "Number",
+              "required": false,
+              "description": "Character count of conversation"
+            },
+            {
+              "name": "ComplianceStatus",
+              "type": "Text",
+              "required": true,
+              "description": "Compliance validation status"
+            },
+            {
+              "name": "RetentionDate",
+              "type": "DateTime",
+              "required": false,
+              "description": "Calculated retention/deletion date"
+            },
+            {
+              "name": "LastAccessed",
+              "type": "DateTime",
+              "required": false,
+              "description": "Last access timestamp"
+            },
+            {
+              "name": "AccessCount",
+              "type": "Number",
+              "required": false,
+              "description": "Number of times file has been accessed"
+            }
+          ],
+          "primaryKey": "FileName",
+          "sortBy": "ProcessedDate",
+          "sortOrder": "Descending"
+        }
+      ]
+    },
+    {
+      "name": "ErrorLog",
+      "description": "Error tracking for failed processing attempts",
+      "tables": [
+        {
+          "name": "ErrorLog",
+          "displayName": "Processing Error Log",
+          "columns": [
+            {
+              "name": "ErrorID",
+              "type": "Number",
+              "required": true,
+              "description": "Unique error identifier"
+            },
+            {
+              "name": "FileName",
+              "type": "Text",
+              "required": false,
+              "description": "Attempted filename (if generated)"
+            },
+            {
+              "name": "UserEmail",
+              "type": "Text",
+              "required": true,
+              "description": "Email of user who attempted submission"
+            },
+            {
+              "name": "ErrorMessage",
+              "type": "Text",
+              "required": true,
+              "description": "Detailed error message"
+            },
+            {
+              "name": "ErrorType",
+              "type": "Text",
+              "required": true,
+              "description": "Category of error (Validation, Storage, Permission, etc.)"
+            },
+            {
+              "name": "ErrorDate",
+              "type": "DateTime",
+              "required": true,
+              "description": "Date and time of error occurrence"
+            },
+            {
+              "name": "ProcessedBy",
+              "type": "Text",
+              "required": true,
+              "description": "System component that logged the error"
+            },
+            {
+              "name": "Status",
+              "type": "Text",
+              "required": true,
+              "description": "Error status (New, Investigating, Resolved)"
+            },
+            {
+              "name": "Resolution",
+              "type": "Text",
+              "required": false,
+              "description": "Resolution notes or actions taken"
+            },
+            {
+              "name": "ResolvedDate",
+              "type": "DateTime",
+              "required": false,
+              "description": "Date when error was resolved"
+            },
+            {
+              "name": "ResolvedBy",
+              "type": "Text",
+              "required": false,
+              "description": "Person who resolved the error"
+            }
+          ],
+          "primaryKey": "ErrorID",
+          "sortBy": "ErrorDate",
+          "sortOrder": "Descending"
+        }
+      ]
+    },
+    {
+      "name": "Statistics",
+      "description": "Summary statistics and analytics",
+      "tables": [
+        {
+          "name": "UsageStatistics",
+          "displayName": "Usage Statistics",
+          "columns": [
+            {
+              "name": "StatID",
+              "type": "Number",
+              "required": true,
+              "description": "Unique statistic identifier"
+            },
+            {
+              "name": "StatDate",
+              "type": "DateTime",
+              "required": true,
+              "description": "Date of statistic"
+            },
+            {
+              "name": "TotalSubmissions",
+              "type": "Number",
+              "required": true,
+              "description": "Total submissions for the period"
+            },
+            {
+              "name": "SuccessfulSubmissions",
+              "type": "Number",
+              "required": true,
+              "description": "Successful submissions"
+            },
+            {
+              "name": "FailedSubmissions",
+              "type": "Number",
+              "required": true,
+              "description": "Failed submissions"
+            },
+            {
+              "name": "UniqueUsers",
+              "type": "Number",
+              "required": true,
+              "description": "Number of unique users"
+            },
+            {
+              "name": "TotalFileSize",
+              "type": "Number",
+              "required": true,
+              "description": "Total file size in bytes"
+            },
+            {
+              "name": "AverageFileSize",
+              "type": "Number",
+              "required": true,
+              "description": "Average file size in bytes"
+            },
+            {
+              "name": "MostUsedContext",
+              "type": "Text",
+              "required": false,
+              "description": "Most frequently used context"
+            },
+            {
+              "name": "MostUsedFunction",
+              "type": "Text",
+              "required": false,
+              "description": "Most frequently used function"
+            },
+            {
+              "name": "MostUsedDependency",
+              "type": "Text",
+              "required": false,
+              "description": "Most frequently used dependency"
+            }
+          ],
+          "primaryKey": "StatID",
+          "sortBy": "StatDate",
+          "sortOrder": "Descending"
+        }
+      ]
+    },
+    {
+      "name": "AuditLog",
+      "description": "Audit trail for compliance and security",
+      "tables": [
+        {
+          "name": "AuditLog",
+          "displayName": "Security Audit Log",
+          "columns": [
+            {
+              "name": "AuditID",
+              "type": "Number",
+              "required": true,
+              "description": "Unique audit identifier"
+            },
+            {
+              "name": "FileName",
+              "type": "Text",
+              "required": false,
+              "description": "File involved in the action"
+            },
+            {
+              "name": "UserEmail",
+              "type": "Text",
+              "required": true,
+              "description": "User who performed the action"
+            },
+            {
+              "name": "Action",
+              "type": "Text",
+              "required": true,
+              "description": "Action performed (View, Edit, Delete, Download, Share)"
+            },
+            {
+              "name": "ActionDate",
+              "type": "DateTime",
+              "required": true,
+              "description": "Date and time of action"
+            },
+            {
+              "name": "IPAddress",
+              "type": "Text",
+              "required": false,
+              "description": "IP address of user"
+            },
+            {
+              "name": "UserAgent",
+              "type": "Text",
+              "required": false,
+              "description": "Browser/client information"
+            },
+            {
+              "name": "Success",
+              "type": "Boolean",
+              "required": true,
+              "description": "Whether the action was successful"
+            },
+            {
+              "name": "Details",
+              "type": "Text",
+              "required": false,
+              "description": "Additional details about the action"
+            }
+          ],
+          "primaryKey": "AuditID",
+          "sortBy": "ActionDate",
+          "sortOrder": "Descending"
+        }
+      ]
+    }
+  ],
+  "namedRanges": [
+    {
+      "name": "LatestSubmissions",
+      "worksheet": "MetadataLog",
+      "range": "A1:Z100",
+      "description": "Latest 100 submissions for dashboard"
+    },
+    {
+      "name": "RecentErrors",
+      "worksheet": "ErrorLog",
+      "range": "A1:K50",
+      "description": "Recent 50 errors for monitoring"
+    },
+    {
+      "name": "MonthlyStats",
+      "worksheet": "Statistics",
+      "range": "A1:L12",
+      "description": "Monthly statistics for reporting"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "CalculateRetentionDate",
+      "formula": "=ProcessedDate + 2555",
+      "description": "Calculate retention date (7 years from processed date)"
+    },
+    {
+      "name": "SuccessRate",
+      "formula": "=SuccessfulSubmissions / TotalSubmissions",
+      "description": "Calculate success rate percentage"
+    },
+    {
+      "name": "StorageUsage",
+      "formula": "=SUM(FileSize) / 1024 / 1024 / 1024",
+      "description": "Calculate total storage usage in GB"
+    }
+  ],
+  "pivotTables": [
+    {
+      "name": "SubmissionsByContext",
+      "sourceTable": "MetadataLog",
+      "rows": ["ContextName"],
+      "values": ["FileName"],
+      "aggregation": "Count"
+    },
+    {
+      "name": "SubmissionsByUser",
+      "sourceTable": "MetadataLog",
+      "rows": ["UserFullName"],
+      "values": ["FileName"],
+      "aggregation": "Count"
+    },
+    {
+      "name": "ErrorsByType",
+      "sourceTable": "ErrorLog",
+      "rows": ["ErrorType"],
+      "values": ["ErrorID"],
+      "aggregation": "Count"
+    }
+  ],
+  "dataValidation": [
+    {
+      "range": "Status",
+      "type": "List",
+      "values": ["Processed", "Error", "Pending"]
+    },
+    {
+      "range": "ComplianceStatus",
+      "type": "List",
+      "values": ["Compliant", "Pending Review", "Non-Compliant"]
+    },
+    {
+      "range": "FileExtension",
+      "type": "List",
+      "values": ["txt", "md", "log"]
+    }
+  ],
+  "formatting": {
+    "conditionalFormatting": [
+      {
+        "range": "Status",
+        "condition": "='Error'",
+        "format": {
+          "backgroundColor": "#FFE6E6",
+          "fontColor": "#D32F2F"
+        }
+      },
+      {
+        "range": "ComplianceStatus",
+        "condition": "='Non-Compliant'",
+        "format": {
+          "backgroundColor": "#FFE6E6",
+          "fontColor": "#D32F2F"
+        }
+      }
+    ]
+  }
+}
