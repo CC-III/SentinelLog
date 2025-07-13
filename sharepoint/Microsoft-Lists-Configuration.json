@@ -1,0 +1,405 @@
+{
+  "sharepointLists": [
+    {
+      "name": "SentinelLog_MetadataLog",
+      "displayName": "ChatGPT Metadata Log",
+      "description": "Primary metadata log for all processed chat transcripts",
+      "template": "genericList",
+      "columns": [
+        {
+          "displayName": "File Name",
+          "internalName": "FileName",
+          "type": "Text",
+          "required": true,
+          "indexed": true,
+          "maxLength": 255
+        },
+        {
+          "displayName": "Context Code",
+          "internalName": "ContextCode",
+          "type": "Choice",
+          "required": true,
+          "choices": ["100", "200", "300", "400"],
+          "defaultValue": "300"
+        },
+        {
+          "displayName": "Context Name",
+          "internalName": "ContextName",
+          "type": "Text",
+          "required": true,
+          "maxLength": 100
+        },
+        {
+          "displayName": "Function Code",
+          "internalName": "FunctionCode",
+          "type": "Choice",
+          "required": true,
+          "choices": ["001", "002", "003", "004", "005", "006", "007"]
+        },
+        {
+          "displayName": "Function Name",
+          "internalName": "FunctionName",
+          "type": "Text",
+          "required": true,
+          "maxLength": 100
+        },
+        {
+          "displayName": "Dependency Code",
+          "internalName": "DependencyCode",
+          "type": "Choice",
+          "required": true,
+          "choices": ["001", "002", "003", "004", "005", "006", "007"]
+        },
+        {
+          "displayName": "Dependency Name",
+          "internalName": "DependencyName",
+          "type": "Text",
+          "required": true,
+          "maxLength": 100
+        },
+        {
+          "displayName": "Iteration Code",
+          "internalName": "IterationCode",
+          "type": "Text",
+          "required": true,
+          "maxLength": 10
+        },
+        {
+          "displayName": "Flag Code",
+          "internalName": "FlagCode",
+          "type": "Choice",
+          "required": false,
+          "choices": ["P", "U", "R", "D", "F"]
+        },
+        {
+          "displayName": "User Email",
+          "internalName": "UserEmail",
+          "type": "Text",
+          "required": true,
+          "maxLength": 255
+        },
+        {
+          "displayName": "User Full Name",
+          "internalName": "UserFullName",
+          "type": "Text",
+          "required": true,
+          "maxLength": 255
+        },
+        {
+          "displayName": "Description",
+          "internalName": "Description",
+          "type": "Note",
+          "required": false
+        },
+        {
+          "displayName": "File Extension",
+          "internalName": "FileExtension",
+          "type": "Choice",
+          "required": true,
+          "choices": ["txt", "md", "log"],
+          "defaultValue": "txt"
+        },
+        {
+          "displayName": "SharePoint Path",
+          "internalName": "SharePointPath",
+          "type": "Text",
+          "required": true,
+          "maxLength": 500
+        },
+        {
+          "displayName": "File URL",
+          "internalName": "FileURL",
+          "type": "URL",
+          "required": true
+        },
+        {
+          "displayName": "Processed Date",
+          "internalName": "ProcessedDate",
+          "type": "DateTime",
+          "required": true,
+          "displayFormat": "DateTime"
+        },
+        {
+          "displayName": "Processed By",
+          "internalName": "ProcessedBy",
+          "type": "Text",
+          "required": true,
+          "maxLength": 100
+        },
+        {
+          "displayName": "Status",
+          "internalName": "Status",
+          "type": "Choice",
+          "required": true,
+          "choices": ["Processed", "Error", "Pending"],
+          "defaultValue": "Processed"
+        },
+        {
+          "displayName": "Compliance Status",
+          "internalName": "ComplianceStatus",
+          "type": "Choice",
+          "required": true,
+          "choices": ["Compliant", "Pending Review", "Non-Compliant"],
+          "defaultValue": "Compliant"
+        },
+        {
+          "displayName": "File Size",
+          "internalName": "FileSize",
+          "type": "Number",
+          "required": false
+        },
+        {
+          "displayName": "Conversation Length",
+          "internalName": "ConversationLength",
+          "type": "Number",
+          "required": false
+        },
+        {
+          "displayName": "Retention Date",
+          "internalName": "RetentionDate",
+          "type": "DateTime",
+          "required": false
+        }
+      ],
+      "views": [
+        {
+          "name": "All Items",
+          "type": "Standard",
+          "fields": [
+            "FileName",
+            "ContextName",
+            "FunctionName",
+            "UserFullName",
+            "ProcessedDate",
+            "ComplianceStatus"
+          ],
+          "sortBy": "ProcessedDate",
+          "sortOrder": "Descending"
+        },
+        {
+          "name": "By Context",
+          "type": "Standard",
+          "fields": [
+            "FileName",
+            "ContextCode",
+            "FunctionCode",
+            "ProcessedDate"
+          ],
+          "groupBy": "ContextCode",
+          "sortBy": "ProcessedDate",
+          "sortOrder": "Descending"
+        },
+        {
+          "name": "By User",
+          "type": "Standard",
+          "fields": [
+            "FileName",
+            "UserFullName",
+            "ProcessedDate",
+            "Description"
+          ],
+          "groupBy": "UserFullName",
+          "sortBy": "ProcessedDate",
+          "sortOrder": "Descending"
+        },
+        {
+          "name": "Recent Activity",
+          "type": "Standard",
+          "fields": [
+            "FileName",
+            "UserFullName",
+            "ProcessedDate",
+            "Status"
+          ],
+          "filter": "ProcessedDate >= [Today]-7",
+          "sortBy": "ProcessedDate",
+          "sortOrder": "Descending"
+        }
+      ]
+    },
+    {
+      "name": "SentinelLog_ErrorLog",
+      "displayName": "Processing Error Log",
+      "description": "Error tracking for failed processing attempts",
+      "template": "genericList",
+      "columns": [
+        {
+          "displayName": "Error ID",
+          "internalName": "ErrorID",
+          "type": "Number",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "displayName": "File Name",
+          "internalName": "FileName",
+          "type": "Text",
+          "required": false,
+          "maxLength": 255
+        },
+        {
+          "displayName": "User Email",
+          "internalName": "UserEmail",
+          "type": "Text",
+          "required": true,
+          "maxLength": 255
+        },
+        {
+          "displayName": "Error Message",
+          "internalName": "ErrorMessage",
+          "type": "Note",
+          "required": true
+        },
+        {
+          "displayName": "Error Type",
+          "internalName": "ErrorType",
+          "type": "Choice",
+          "required": true,
+          "choices": ["Validation", "Storage", "Permission", "Network", "System"]
+        },
+        {
+          "displayName": "Error Date",
+          "internalName": "ErrorDate",
+          "type": "DateTime",
+          "required": true,
+          "displayFormat": "DateTime"
+        },
+        {
+          "displayName": "Status",
+          "internalName": "Status",
+          "type": "Choice",
+          "required": true,
+          "choices": ["New", "Investigating", "Resolved"],
+          "defaultValue": "New"
+        },
+        {
+          "displayName": "Resolution",
+          "internalName": "Resolution",
+          "type": "Note",
+          "required": false
+        },
+        {
+          "displayName": "Resolved Date",
+          "internalName": "ResolvedDate",
+          "type": "DateTime",
+          "required": false
+        },
+        {
+          "displayName": "Resolved By",
+          "internalName": "ResolvedBy",
+          "type": "Text",
+          "required": false,
+          "maxLength": 100
+        }
+      ]
+    },
+    {
+      "name": "SentinelLog_AuditLog",
+      "displayName": "Security Audit Log",
+      "description": "Audit trail for compliance and security",
+      "template": "genericList",
+      "columns": [
+        {
+          "displayName": "Audit ID",
+          "internalName": "AuditID",
+          "type": "Number",
+          "required": true,
+          "indexed": true
+        },
+        {
+          "displayName": "File Name",
+          "internalName": "FileName",
+          "type": "Text",
+          "required": false,
+          "maxLength": 255
+        },
+        {
+          "displayName": "User Email",
+          "internalName": "UserEmail",
+          "type": "Text",
+          "required": true,
+          "maxLength": 255
+        },
+        {
+          "displayName": "Action",
+          "internalName": "Action",
+          "type": "Choice",
+          "required": true,
+          "choices": ["View", "Edit", "Delete", "Download", "Share", "Submit"]
+        },
+        {
+          "displayName": "Action Date",
+          "internalName": "ActionDate",
+          "type": "DateTime",
+          "required": true,
+          "displayFormat": "DateTime"
+        },
+        {
+          "displayName": "IP Address",
+          "internalName": "IPAddress",
+          "type": "Text",
+          "required": false,
+          "maxLength": 50
+        },
+        {
+          "displayName": "Success",
+          "internalName": "Success",
+          "type": "Boolean",
+          "required": true,
+          "defaultValue": true
+        },
+        {
+          "displayName": "Details",
+          "internalName": "Details",
+          "type": "Note",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "listName": "SentinelLog_MetadataLog",
+      "permissions": [
+        {
+          "principal": "SentinelLog-Administrators",
+          "permission": "FullControl"
+        },
+        {
+          "principal": "SentinelLog-Users",
+          "permission": "Contribute"
+        },
+        {
+          "principal": "SentinelLog-ReadOnly",
+          "permission": "Read"
+        }
+      ]
+    },
+    {
+      "listName": "SentinelLog_ErrorLog",
+      "permissions": [
+        {
+          "principal": "SentinelLog-Administrators",
+          "permission": "FullControl"
+        },
+        {
+          "principal": "SentinelLog-ReadOnly",
+          "permission": "Read"
+        }
+      ]
+    },
+    {
+      "listName": "SentinelLog_AuditLog",
+      "permissions": [
+        {
+          "principal": "SentinelLog-Administrators",
+          "permission": "FullControl"
+        },
+        {
+          "principal": "SentinelLog-ReadOnly",
+          "permission": "Read"
+        }
+      ]
+    }
+  ]
+}
