@@ -1,0 +1,234 @@
+{
+  "gptConfiguration": {
+    "name": "SentinelLog Assistant",
+    "description": "A ChatGPT assistant that automatically logs conversations to your organization's SharePoint for compliance",
+    "instructions": "You are SentinelLog Assistant, designed to help users while automatically logging conversations for compliance. After each conversation, you will automatically send the transcript to the organization's logging system. You should be helpful, professional, and remind users that conversations are being logged for compliance purposes when appropriate.",
+    "conversation_starters": [
+      "Help me with coding questions (logged for compliance)",
+      "Analyze this problem for me",
+      "Generate documentation for this project", 
+      "Review and improve this code"
+    ],
+    "knowledge": [],
+    "capabilities": {
+      "web_browsing": false,
+      "dalle_image_generation": false,
+      "code_interpreter": false
+    },
+    "actions": [
+      {
+        "name": "log_conversation",
+        "description": "Automatically log conversation to SentinelLog system",
+        "url": "https://your-webhook-endpoint.azurewebsites.net/api/chatgpt-webhook",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "X-API-Key": "your-api-key-here"
+        }
+      }
+    ]
+  },
+  "openapi_schema": {
+    "openapi": "3.0.0",
+    "info": {
+      "title": "SentinelLog Webhook API",
+      "version": "1.0.0",
+      "description": "API for logging ChatGPT conversations to SharePoint"
+    },
+    "servers": [
+      {
+        "url": "https://your-webhook-endpoint.azurewebsites.net/api"
+      }
+    ],
+    "paths": {
+      "/chatgpt-webhook": {
+        "post": {
+          "operationId": "logConversation",
+          "summary": "Log ChatGPT conversation to SharePoint",
+          "description": "Automatically captures and logs ChatGPT conversations for compliance",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationLog"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Conversation logged successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LogResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          },
+          "security": [
+            {
+              "ApiKeyAuth": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "ConversationLog": {
+          "type": "object",
+          "required": [
+            "conversationId",
+            "messages",
+            "timestamp"
+          ],
+          "properties": {
+            "conversationId": {
+              "type": "string",
+              "description": "Unique identifier for the conversation"
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Message"
+              },
+              "description": "Array of messages in the conversation"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when conversation was captured"
+            },
+            "user": {
+              "$ref": "#/components/schemas/User"
+            },
+            "metadata": {
+              "$ref": "#/components/schemas/ConversationMetadata"
+            }
+          }
+        },
+        "Message": {
+          "type": "object",
+          "required": [
+            "role",
+            "content"
+          ],
+          "properties": {
+            "role": {
+              "type": "string",
+              "enum": ["user", "assistant", "system"],
+              "description": "Role of the message sender"
+            },
+            "content": {
+              "type": "string",
+              "description": "Content of the message"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the message was sent"
+            }
+          }
+        },
+        "User": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "User's email address"
+            },
+            "name": {
+              "type": "string",
+              "description": "User's full name"
+            },
+            "id": {
+              "type": "string",
+              "description": "User's unique identifier"
+            }
+          }
+        },
+        "ConversationMetadata": {
+          "type": "object",
+          "properties": {
+            "topic": {
+              "type": "string",
+              "description": "Main topic of conversation"
+            },
+            "category": {
+              "type": "string",
+              "description": "Category classification"
+            },
+            "priority": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "urgent"],
+              "description": "Priority level"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tags for categorization"
+            }
+          }
+        },
+        "LogResponse": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "description": "Whether the logging was successful"
+            },
+            "message": {
+              "type": "string",
+              "description": "Response message"
+            },
+            "filename": {
+              "type": "string",
+              "description": "Generated filename for the log"
+            },
+            "conversationId": {
+              "type": "string",
+              "description": "ID of the logged conversation"
+            },
+            "sharePointUrl": {
+              "type": "string",
+              "description": "URL to the stored file in SharePoint"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the log was processed"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      }
+    }
+  },
+  "deployment_instructions": {
+    "step1": "Create a new Custom GPT in ChatGPT",
+    "step2": "Copy the GPT configuration above",
+    "step3": "Paste the OpenAPI schema in the Actions section",
+    "step4": "Update the webhook URL with your Azure Function endpoint",
+    "step5": "Add your API key for authentication",
+    "step6": "Test the GPT to ensure conversations are logged",
+    "step7": "Share the GPT with your organization"
+  }
+}
